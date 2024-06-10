@@ -1,11 +1,11 @@
 use crate::event::Key;
 use anyhow::{anyhow, Result};
+use ratatui::style::Color;
 use serde::{Deserialize, Serialize};
 use std::{
   fs,
   path::{Path, PathBuf},
 };
-use tui::style::Color;
 
 const FILE_NAME: &str = "config.yml";
 const CONFIG_DIR: &str = ".config";
@@ -524,7 +524,7 @@ fn parse_theme_item(theme_item: &str) -> Result<Color> {
     "White" => Color::White,
     _ => {
       let colors = theme_item.split(',').collect::<Vec<&str>>();
-      if let (Some(r), Some(g), Some(b)) = (colors.get(0), colors.get(1), colors.get(2)) {
+      if let (Some(r), Some(g), Some(b)) = (colors.first(), colors.get(1), colors.get(2)) {
         Color::Rgb(
           r.trim().parse::<u8>()?,
           g.trim().parse::<u8>()?,
@@ -558,7 +558,7 @@ mod tests {
   #[test]
   fn parse_theme_item_test() {
     use super::parse_theme_item;
-    use tui::style::Color;
+    use ratatui::style::Color;
     assert_eq!(parse_theme_item("Reset").unwrap(), Color::Reset);
     assert_eq!(parse_theme_item("Black").unwrap(), Color::Black);
     assert_eq!(parse_theme_item("Red").unwrap(), Color::Red);

@@ -37,7 +37,7 @@ pub async fn handle_matches(
   let device_id = cli.net.client_config.device_id.clone();
   if device_id.is_none() || !devices_list.contains(&device_id.unwrap()) {
     // Select the first device available
-    if let Some(d) = devices_list.get(0) {
+    if let Some(d) = devices_list.first() {
       cli.net.client_config.set_device_id(d.clone())?;
     }
   }

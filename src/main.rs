@@ -28,6 +28,10 @@ use crossterm::{
   ExecutableCommand,
 };
 use network::{get_spotify, IoEvent, Network};
+use ratatui::{
+  backend::{Backend, CrosstermBackend},
+  Terminal,
+};
 use redirect_uri::redirect_uri_web_server;
 use rspotify::{
   oauth2::{SpotifyOAuth, TokenInfo},
@@ -42,10 +46,6 @@ use std::{
   time::SystemTime,
 };
 use tokio::sync::Mutex;
-use tui::{
-  backend::{Backend, CrosstermBackend},
-  Terminal,
-};
 use user_config::{UserConfig, UserConfigPaths};
 
 const SCOPES: [&str; 14] = [
@@ -319,24 +319,24 @@ async fn start_ui(user_config: UserConfig, app: &Arc<Mutex<App>>) -> Result<()> 
     };
 
     let current_route = app.get_current_route();
-    terminal.draw(|mut f| match current_route.active_block {
+    terminal.draw(|f| match current_route.active_block {
       ActiveBlock::HelpMenu => {
-        ui::draw_help_menu(&mut f, &app);
+        ui::draw_help_menu(f, &app);
       }
       ActiveBlock::Error => {
-        ui::draw_error_screen(&mut f, &app);
+        ui::draw_error_screen(f, &app);
       }
       ActiveBlock::SelectDevice => {
-        ui::draw_device_list(&mut f, &app);
+        ui::draw_device_list(f, &app);
       }
       ActiveBlock::Analysis => {
-        ui::audio_analysis::draw(&mut f, &app);
+        ui::audio_analysis::draw(f, &app);
       }
       ActiveBlock::BasicView => {
-        ui::draw_basic_view(&mut f, &app);
+        ui::draw_basic_view(f, &app);
       }
       _ => {
-        ui::draw_main_layout(&mut f, &app);
+        ui::draw_main_layout(f, &app);
       }
     })?;
 

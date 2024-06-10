@@ -1,6 +1,7 @@
 use super::user_config::UserConfig;
 use crate::network::IoEvent;
 use anyhow::anyhow;
+use ratatui::layout::Rect;
 use rspotify::{
   model::{
     album::{FullAlbum, SavedAlbum, SimplifiedAlbum},
@@ -25,7 +26,6 @@ use std::{
   collections::HashSet,
   time::{Instant, SystemTime},
 };
-use tui::layout::Rect;
 
 use arboard::Clipboard;
 
@@ -300,7 +300,6 @@ pub struct App {
   pub selected_playlist_index: Option<usize>,
   pub active_playlist_index: Option<usize>,
   pub size: Rect,
-  pub small_search_limit: u32,
   pub song_progress_ms: u128,
   pub seek_ms: Option<u128>,
   pub track_table: TrackTable,
@@ -360,7 +359,6 @@ impl Default for App {
       saved_show_ids_set: HashSet::new(),
       navigation_stack: vec![DEFAULT_ROUTE],
       large_search_limit: 20,
-      small_search_limit: 4,
       api_error: String::new(),
       current_playback_context: None,
       devices: None,
@@ -663,7 +661,7 @@ impl App {
     active_block: Option<ActiveBlock>,
     hovered_block: Option<ActiveBlock>,
   ) {
-    let mut current_route = self.get_current_route_mut();
+    let current_route = self.get_current_route_mut();
     if let Some(active_block) = active_block {
       current_route.active_block = active_block;
     }
@@ -1178,7 +1176,7 @@ impl App {
     self
       .user
       .to_owned()
-      .and_then(|user| Country::from_str(&user.country.unwrap_or_else(|| "".to_string())).ok())
+      .and_then(|user| Country::from_str(&user.country.unwrap_or_default()).ok())
   }
 
   pub fn calculate_help_menu_offset(&mut self) {
